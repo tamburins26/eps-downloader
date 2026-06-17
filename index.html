@@ -34,8 +34,12 @@
     color: #666;
     margin-bottom: 6px;
   }
+  .input-row {
+    display: flex;
+    gap: 8px;
+  }
   input {
-    width: 100%;
+    flex: 1;
     padding: 10px 12px;
     border: 1px solid #ddd;
     border-radius: 8px;
@@ -54,11 +58,37 @@
   }
   .validation.error { color: #c00; }
   .validation.ok { color: #0a0; }
-  button {
-    width: 100%;
-    margin-top: 12px;
-    padding: 12px;
+  .btn-search {
+    padding: 10px 20px;
     background: #111;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: opacity 0.2s;
+    white-space: nowrap;
+  }
+  .btn-search:hover { opacity: 0.85; }
+  .btn-search:disabled { opacity: 0.4; cursor: not-allowed; }
+  .step2 {
+    display: none;
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid #eee;
+  }
+  .step2-info {
+    font-size: 13px;
+    color: #666;
+    margin-bottom: 12px;
+    line-height: 1.5;
+  }
+  .step2-info strong { color: #111; }
+  .btn-download {
+    width: 100%;
+    padding: 12px;
+    background: #0066cc;
     color: #fff;
     border: none;
     border-radius: 8px;
@@ -67,10 +97,21 @@
     cursor: pointer;
     transition: opacity 0.2s;
   }
-  button:hover { opacity: 0.85; }
-  button:disabled { opacity: 0.4; cursor: not-allowed; }
+  .btn-download:hover { opacity: 0.85; }
+  .btn-download:disabled { opacity: 0.4; cursor: not-allowed; }
+  .btn-recheck {
+    display: inline-block;
+    margin-top: 8px;
+    font-size: 13px;
+    color: #0066cc;
+    background: none;
+    border: none;
+    cursor: pointer;
+    text-decoration: underline;
+    padding: 0;
+  }
   .status {
-    margin-top: 12px;
+    margin-top: 10px;
     font-size: 13px;
     color: #888;
     text-align: center;
@@ -84,80 +125,104 @@
 <div class="card">
   <h1>바코드 EPS 다운로드</h1>
   <label for="gtin">GTIN-13</label>
-  <input type="text" id="gtin" placeholder="8809907779840" maxlength="13" autofocus>
+  <div class="input-row">
+    <input type="text" id="gtin" placeholder="8809907779840" maxlength="13" autofocus>
+    <button class="btn-search" id="btnSearch" onclick="search()" disabled>검색</button>
+  </div>
   <div class="validation" id="validation"></div>
-  <button id="btn" onclick="download()" disabled>다운로드</button>
-  <div class="status" id="status"></div>
+
+  <div class="step2" id="step2">
+    <div class="step2-info">
+      <strong id="gtinDisplay"></strong> 검색결과를 새 탭에서 확인하세요.<br>
+      확인 후 아래 버튼으로 EPS 파일을 다운로드합니다.
+    </div>
+    <button class="btn-download" id="btnDownload" onclick="download()">EPS 다운로드</button>
+    <button class="btn-recheck" onclick="search()">검색결과 다시 보기</button>
+    <div class="status" id="status"></div>
+  </div>
 </div>
 
 <script>
+var currentGtin = '';
+
 // EAN-13 체크디짓 검증
 function validateEAN13(code) {
   if (!/^\d{13}$/.test(code)) return { valid: false, msg: '13자리 숫자를 입력하세요' };
-
   var digits = code.split('').map(Number);
   var sum = 0;
   for (var i = 0; i < 12; i++) {
     sum += digits[i] * (i % 2 === 0 ? 1 : 3);
   }
   var checkDigit = (10 - (sum % 10)) % 10;
-
   if (digits[12] !== checkDigit) {
     return { valid: false, msg: '체크디짓 오류 — 마지막 자리가 ' + checkDigit + '이어야 합니다' };
   }
   return { valid: true, msg: '유효한 EAN-13' };
 }
 
-// 입력할 때마다 실시간 검증
+// 실시간 검증
 var gtinInput = document.getElementById('gtin');
 var validation = document.getElementById('validation');
-var btn = document.getElementById('btn');
+var btnSearch = document.getElementById('btnSearch');
 
 gtinInput.addEventListener('input', function() {
   var val = this.value.trim();
+  document.getElementById('step2').style.display = 'none';
 
   if (val.length === 0) {
     this.className = '';
     validation.className = 'validation';
     validation.textContent = '';
-    btn.disabled = true;
+    btnSearch.disabled = true;
     return;
   }
-
   if (val.length < 13) {
     this.className = '';
     validation.className = 'validation';
     validation.textContent = val.length + '/13자리';
-    btn.disabled = true;
+    btnSearch.disabled = true;
     return;
   }
-
   var result = validateEAN13(val);
   if (result.valid) {
     this.className = 'valid';
     validation.className = 'validation ok';
     validation.textContent = result.msg;
-    btn.disabled = false;
+    btnSearch.disabled = false;
   } else {
     this.className = 'invalid';
     validation.className = 'validation error';
     validation.textContent = result.msg;
-    btn.disabled = true;
+    btnSearch.disabled = true;
   }
 });
 
+// 검색 — 새 탭에서 코리안넷 결과 열기
+function search() {
+  currentGtin = gtinInput.value.trim();
+  if (!validateEAN13(currentGtin).valid) return;
+
+  window.open(
+    'https://www.koreannet.or.kr/front/koreannet/gtinSrch.do?gtin=' + currentGtin,
+    '_blank'
+  );
+
+  document.getElementById('gtinDisplay').textContent = currentGtin;
+  document.getElementById('step2').style.display = 'block';
+  document.getElementById('status').textContent = '';
+}
+
+// EPS 다운로드 — 기존 작동하던 코드 그대로
 function download() {
-  var gtin = gtinInput.value.trim();
   var status = document.getElementById('status');
+  var btnDownload = document.getElementById('btnDownload');
 
-  if (!validateEAN13(gtin).valid) return;
-
-  btn.disabled = true;
+  btnDownload.disabled = true;
   status.className = 'status';
   status.textContent = '바코드 생성 중...';
 
   var base = 'https://barcode.koreannet.or.kr/TBarCode';
-  var params = 'gtin=' + gtin + '&barCodeType=GTIN-13&imageformat=8';
+  var params = 'gtin=' + currentGtin + '&barCodeType=GTIN-13&imageformat=8';
 
   var img = new Image();
 
@@ -167,12 +232,12 @@ function download() {
 
     var a = document.createElement('a');
     a.href = base + '/BarCodeDown.asp?' + params;
-    a.download = gtin + '.eps';
+    a.download = currentGtin + '.eps';
     document.body.appendChild(a);
     a.click();
     a.remove();
 
-    btn.disabled = false;
+    btnDownload.disabled = false;
     setTimeout(function() { status.textContent = ''; }, 3000);
   }
 
@@ -182,7 +247,7 @@ function download() {
 }
 
 gtinInput.addEventListener('keydown', function(e) {
-  if (e.key === 'Enter' && !btn.disabled) download();
+  if (e.key === 'Enter' && !btnSearch.disabled) search();
 });
 </script>
 
