@@ -17,107 +17,68 @@
   .card {
     background: #fff;
     border-radius: 12px;
-    padding: 40px;
-    width: 420px;
-    max-width: 90vw;
+    padding: 36px;
+    width: 480px;
+    max-width: 95vw;
     box-shadow: 0 2px 12px rgba(0,0,0,0.08);
   }
-  h1 {
-    font-size: 18px;
-    font-weight: 600;
-    margin-bottom: 24px;
-    color: #111;
-  }
-  label {
-    display: block;
-    font-size: 13px;
-    color: #666;
-    margin-bottom: 6px;
-  }
-  .input-row {
-    display: flex;
-    gap: 8px;
-  }
+  h1 { font-size: 18px; font-weight: 600; margin-bottom: 20px; color: #111; }
+  label { display: block; font-size: 13px; color: #666; margin-bottom: 6px; }
+  .input-row { display: flex; gap: 8px; }
   input {
-    flex: 1;
-    padding: 10px 12px;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    font-size: 16px;
-    outline: none;
-    transition: border-color 0.2s;
+    flex: 1; padding: 10px 12px; border: 1px solid #ddd;
+    border-radius: 8px; font-size: 16px; outline: none; transition: border-color 0.2s;
   }
   input:focus { border-color: #333; }
   input.invalid { border-color: #c00; }
   input.valid { border-color: #0a0; }
-  .validation {
-    margin-top: 6px;
-    font-size: 12px;
-    min-height: 18px;
-    color: #888;
-  }
+  .validation { margin-top: 6px; font-size: 12px; min-height: 18px; color: #888; }
   .validation.error { color: #c00; }
   .validation.ok { color: #0a0; }
   .btn-search {
-    padding: 10px 20px;
-    background: #111;
-    color: #fff;
-    border: none;
-    border-radius: 8px;
-    font-size: 14px;
-    font-weight: 500;
-    cursor: pointer;
-    transition: opacity 0.2s;
-    white-space: nowrap;
+    padding: 10px 20px; background: #111; color: #fff; border: none;
+    border-radius: 8px; font-size: 14px; font-weight: 500; cursor: pointer;
+    transition: opacity 0.2s; white-space: nowrap;
   }
   .btn-search:hover { opacity: 0.85; }
   .btn-search:disabled { opacity: 0.4; cursor: not-allowed; }
-  .step2 {
-    display: none;
-    margin-top: 20px;
-    padding-top: 20px;
-    border-top: 1px solid #eee;
+
+  .product-info { display: none; margin-top: 20px; padding-top: 20px; border-top: 1px solid #eee; }
+  .product-card {
+    display: none; gap: 16px; padding: 16px; background: #fafafa;
+    border-radius: 8px; border: 1px solid #eee;
   }
-  .step2-info {
-    font-size: 13px;
-    color: #666;
-    margin-bottom: 12px;
-    line-height: 1.5;
+  .product-card .thumb {
+    width: 80px; height: 80px; border-radius: 6px;
+    object-fit: cover; background: #eee; flex-shrink: 0;
   }
-  .step2-info strong { color: #111; }
+  .product-card .details { flex: 1; min-width: 0; }
+  .product-card .product-name {
+    font-size: 15px; font-weight: 600; color: #111;
+    margin-bottom: 6px; word-break: break-word;
+  }
+  .product-card .meta { font-size: 12px; color: #888; line-height: 1.6; }
+  .product-card .meta span { color: #555; }
+  .product-not-found {
+    display: none; padding: 16px; background: #fff8f0; border: 1px solid #ffe0c0;
+    border-radius: 8px; font-size: 13px; color: #a06000; text-align: center;
+  }
+  .product-loading { display: none; text-align: center; padding: 20px; font-size: 13px; color: #888; }
+
+  .step2 { display: none; margin-top: 16px; }
   .btn-download {
-    width: 100%;
-    padding: 12px;
-    background: #0066cc;
-    color: #fff;
-    border: none;
-    border-radius: 8px;
-    font-size: 15px;
-    font-weight: 500;
-    cursor: pointer;
-    transition: opacity 0.2s;
+    width: 100%; padding: 12px; background: #0066cc; color: #fff; border: none;
+    border-radius: 8px; font-size: 15px; font-weight: 500; cursor: pointer; transition: opacity 0.2s;
   }
   .btn-download:hover { opacity: 0.85; }
   .btn-download:disabled { opacity: 0.4; cursor: not-allowed; }
-  .btn-recheck {
-    display: inline-block;
-    margin-top: 8px;
-    font-size: 13px;
-    color: #0066cc;
-    background: none;
-    border: none;
-    cursor: pointer;
-    text-decoration: underline;
-    padding: 0;
+  .koreannet-link {
+    display: inline-block; margin-top: 8px; font-size: 13px;
+    color: #0066cc; text-decoration: underline;
   }
-  .status {
-    margin-top: 10px;
-    font-size: 13px;
-    color: #888;
-    text-align: center;
-    min-height: 20px;
-  }
+  .status { margin-top: 10px; font-size: 13px; color: #888; text-align: center; min-height: 20px; }
   .status.ok { color: #0a0; }
+  .status.error { color: #c00; }
 </style>
 </head>
 <body>
@@ -131,119 +92,174 @@
   </div>
   <div class="validation" id="validation"></div>
 
-  <div class="step2" id="step2">
-    <div class="step2-info">
-      <strong id="gtinDisplay"></strong> 검색결과를 새 탭에서 확인하세요.<br>
-      확인 후 아래 버튼으로 EPS 파일을 다운로드합니다.
+  <div class="product-info" id="productInfo">
+    <div class="product-loading" id="productLoading">상품정보 조회 중...</div>
+    <div class="product-card" id="productCard">
+      <img class="thumb" id="productImg" src="" alt="">
+      <div class="details">
+        <div class="product-name" id="productName"></div>
+        <div class="meta">
+          <div>분류: <span id="productCategory"></span></div>
+          <div>제조사: <span id="productMfr"></span></div>
+        </div>
+      </div>
     </div>
-    <button class="btn-download" id="btnDownload" onclick="download()">EPS 다운로드</button>
-    <button class="btn-recheck" onclick="search()">검색결과 다시 보기</button>
-    <div class="status" id="status"></div>
+    <div class="product-not-found" id="productNotFound">등록된 상품정보가 없습니다</div>
+
+    <div class="step2" id="step2">
+      <button class="btn-download" id="btnDownload" onclick="download()">EPS 다운로드</button>
+      <a class="koreannet-link" id="koreannetLink" href="#" target="_blank">코리안넷에서 상세정보 보기 →</a>
+      <div class="status" id="status"></div>
+    </div>
   </div>
 </div>
 
 <script>
-var currentGtin = '';
+// ★ GAS 웹앱 배포 URL을 여기에 넣으세요
+var GAS_URL = 'https://script.google.com/macros/s/AKfycbzUEFWht-2ZiJTA-3LOKdEKJy791H2ypCmInLgNRstJQSBDQr6Um16fbru_tsXZmVnr/exec';
 
-// EAN-13 체크디짓 검증
+var currentGtin = '';
+var currentProductName = '';
+
 function validateEAN13(code) {
   if (!/^\d{13}$/.test(code)) return { valid: false, msg: '13자리 숫자를 입력하세요' };
   var digits = code.split('').map(Number);
   var sum = 0;
-  for (var i = 0; i < 12; i++) {
-    sum += digits[i] * (i % 2 === 0 ? 1 : 3);
-  }
+  for (var i = 0; i < 12; i++) sum += digits[i] * (i % 2 === 0 ? 1 : 3);
   var checkDigit = (10 - (sum % 10)) % 10;
-  if (digits[12] !== checkDigit) {
+  if (digits[12] !== checkDigit)
     return { valid: false, msg: '체크디짓 오류 — 마지막 자리가 ' + checkDigit + '이어야 합니다' };
-  }
   return { valid: true, msg: '유효한 EAN-13' };
 }
 
-// 실시간 검증
 var gtinInput = document.getElementById('gtin');
 var validation = document.getElementById('validation');
 var btnSearch = document.getElementById('btnSearch');
 
 gtinInput.addEventListener('input', function() {
   var val = this.value.trim();
-  document.getElementById('step2').style.display = 'none';
-
+  document.getElementById('productInfo').style.display = 'none';
   if (val.length === 0) {
-    this.className = '';
-    validation.className = 'validation';
-    validation.textContent = '';
-    btnSearch.disabled = true;
-    return;
+    this.className = ''; validation.className = 'validation';
+    validation.textContent = ''; btnSearch.disabled = true; return;
   }
   if (val.length < 13) {
-    this.className = '';
-    validation.className = 'validation';
-    validation.textContent = val.length + '/13자리';
-    btnSearch.disabled = true;
-    return;
+    this.className = ''; validation.className = 'validation';
+    validation.textContent = val.length + '/13자리'; btnSearch.disabled = true; return;
   }
   var result = validateEAN13(val);
   if (result.valid) {
-    this.className = 'valid';
-    validation.className = 'validation ok';
-    validation.textContent = result.msg;
-    btnSearch.disabled = false;
+    this.className = 'valid'; validation.className = 'validation ok';
+    validation.textContent = result.msg; btnSearch.disabled = false;
   } else {
-    this.className = 'invalid';
-    validation.className = 'validation error';
-    validation.textContent = result.msg;
-    btnSearch.disabled = true;
+    this.className = 'invalid'; validation.className = 'validation error';
+    validation.textContent = result.msg; btnSearch.disabled = true;
   }
 });
 
-// 검색 — 새 탭에서 코리안넷 결과 열기
 function search() {
   currentGtin = gtinInput.value.trim();
   if (!validateEAN13(currentGtin).valid) return;
 
-  window.open(
-    'https://www.koreannet.or.kr/front/koreannet/gtinSrch.do?gtin=' + currentGtin,
-    '_blank'
-  );
+  var productInfo = document.getElementById('productInfo');
+  var productLoading = document.getElementById('productLoading');
+  var productCard = document.getElementById('productCard');
+  var productNotFound = document.getElementById('productNotFound');
+  var step2 = document.getElementById('step2');
 
-  document.getElementById('gtinDisplay').textContent = currentGtin;
-  document.getElementById('step2').style.display = 'block';
-  document.getElementById('status').textContent = '';
+  productInfo.style.display = 'block';
+  productLoading.style.display = 'block';
+  productCard.style.display = 'none';
+  productNotFound.style.display = 'none';
+  step2.style.display = 'none';
+  btnSearch.disabled = true;
+  currentProductName = '';
+
+  document.getElementById('koreannetLink').href =
+    'https://www.koreannet.or.kr/front/koreannet/gtinSrch.do?gtin=' + currentGtin;
+
+  fetch(GAS_URL + '?gtin=' + currentGtin + '&action=search')
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+      productLoading.style.display = 'none';
+      if (data.error === 'not_found' || !data.name) {
+        productNotFound.style.display = 'block';
+      } else {
+        currentProductName = data.name;
+        document.getElementById('productName').textContent = data.name;
+        document.getElementById('productCategory').textContent = data.category || '-';
+        document.getElementById('productMfr').textContent = data.manufacturer || '-';
+        var img = document.getElementById('productImg');
+        if (data.image) { img.src = data.image; img.style.display = 'block'; }
+        else { img.style.display = 'none'; }
+        productCard.style.display = 'flex';
+        step2.style.display = 'block';
+      }
+      btnSearch.disabled = false;
+    })
+    .catch(function() {
+      productLoading.style.display = 'none';
+      productNotFound.textContent = '조회 실패 — 잠시 후 다시 시도하세요';
+      productNotFound.style.display = 'block';
+      btnSearch.disabled = false;
+    });
 }
 
-// EPS 다운로드 — 기존 작동하던 코드 그대로
+// 파일명에 쓸 수 없는 문자 제거
+function sanitize(str) {
+  return str.replace(/[\\/:*?"<>|]/g, '').trim();
+}
+
+// EPS 다운로드 — GAS 프록시 경유 (파일명 커스텀)
 function download() {
   var status = document.getElementById('status');
   var btnDownload = document.getElementById('btnDownload');
-
   btnDownload.disabled = true;
   status.className = 'status';
-  status.textContent = '바코드 생성 중...';
+  status.textContent = '바코드 EPS 생성 중...';
 
-  var base = 'https://barcode.koreannet.or.kr/TBarCode';
-  var params = 'gtin=' + currentGtin + '&barCodeType=GTIN-13&imageformat=8';
+  fetch(GAS_URL + '?gtin=' + currentGtin + '&action=download')
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+      if (data.error) {
+        status.className = 'status error';
+        status.textContent = '다운로드 실패: ' + data.error;
+        btnDownload.disabled = false;
+        return;
+      }
 
-  var img = new Image();
+      // base64 → Blob → 다운로드
+      var byteChars = atob(data.eps);
+      var byteArray = new Uint8Array(byteChars.length);
+      for (var i = 0; i < byteChars.length; i++) {
+        byteArray[i] = byteChars.charCodeAt(i);
+      }
+      var blob = new Blob([byteArray], { type: 'application/postscript' });
+      var blobUrl = URL.createObjectURL(blob);
 
-  function triggerDownload() {
-    status.className = 'status ok';
-    status.textContent = '다운로드 시작!';
+      // 파일명: 상품명_바코드.eps (상품명 없으면 바코드만)
+      var filename = currentProductName
+        ? sanitize(currentProductName) + '_' + currentGtin + '.eps'
+        : currentGtin + '.eps';
 
-    var a = document.createElement('a');
-    a.href = base + '/BarCodeDown.asp?' + params;
-    a.download = currentGtin + '.eps';
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
+      var a = document.createElement('a');
+      a.href = blobUrl;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(blobUrl);
 
-    btnDownload.disabled = false;
-    setTimeout(function() { status.textContent = ''; }, 3000);
-  }
-
-  img.onload = triggerDownload;
-  img.onerror = triggerDownload;
-  img.src = base + '/BarCodeMake.asp?' + params + '&downYn=Y';
+      status.className = 'status ok';
+      status.textContent = '다운로드 완료!';
+      btnDownload.disabled = false;
+      setTimeout(function() { status.textContent = ''; }, 3000);
+    })
+    .catch(function() {
+      status.className = 'status error';
+      status.textContent = '다운로드 실패 — 잠시 후 다시 시도하세요';
+      btnDownload.disabled = false;
+    });
 }
 
 gtinInput.addEventListener('keydown', function(e) {
